@@ -7,26 +7,16 @@ module Day02 =
     let toVariants report =
         report |> List.mapi (fun i v -> report |> List.removeAt i)
 
-    let asDiffList report =
-        report |> List.pairwise |> List.map (fun (left, right) -> left - right)
-
     let isSafeDiff diff = diff >= 1 && diff <= 3
 
     let isSafeReport report =
         report
-        |> asDiffList
+        |> List.pairwise |> List.map (fun (left, right) -> left - right)
         |> (fun diffList ->
-
-            if
-                (diffList |> List.forall (fun diff -> diff > 0)
-                 || diffList |> List.forall (fun diff -> diff < 0))
-            then
-                let absDiffList = diffList |> List.map (fun diff -> abs diff)
-
-                absDiffList |> List.forall isSafeDiff
-
-            else
-                false)
+            match diffList |> List.partition (fun diff -> diff >= 0) with
+            | [], everything
+            | everything, [] -> diffList |> List.map (fun diff -> abs diff) |> List.forall isSafeDiff
+            | _ -> false)
 
     let solvePart1 reports =
         reports
@@ -53,5 +43,3 @@ module Day02 =
         let part2 = reports |> solvePart2
 
         $"Solutions for day 2:\nPart 1: {part1}\nPart 2: {part2}\n"
-
-        
