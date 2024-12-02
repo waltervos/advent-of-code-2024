@@ -4,5 +4,8 @@ module Program =
 
     [<EntryPoint>]
     let main _ =
-        Day01.main |> printfn "Solution: %A"
+        let (part1, part2) = Day02.main
+        printfn "Solution:"
+        printfn "Part 1: %i" part1
+        printfn "Part 2: %i" part2
         0
