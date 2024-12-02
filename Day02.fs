@@ -49,4 +49,9 @@ module Day02 =
 
     let main =
         let reports = Library.getInputForDay 2 |> parse
-        (reports |> solvePart1, reports |> solvePart2)
+        let part1 = reports |> solvePart1
+        let part2 = reports |> solvePart2
+
+        $"Solutions for day 2:\nPart 1: {part1}\nPart 2: {part2}\n"
+
+        

@@ -29,4 +29,8 @@ module Day01 =
 
         intListList[0], intListList[1]
 
-    let main = Library.getInputForDay 1 |> parse ||> solve
+    let main = 
+        let part1, part2 =
+            Library.getInputForDay 1 |> parse ||> solve
+
+        $"Solutions for day 1:\nPart 1: {part1}\nPart 2: {part2}\n"
