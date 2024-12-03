@@ -15,9 +15,9 @@ let exampleInputPt2 =
 "
 
 [<Test>]
-let ``Example from adventofcode.com, part 1`` () =
-    exampleInputPt1 |> Day03.solvePart1 |> should equal 161
+let ``Example from adventofcode.com, part 1, with part 1 input`` () =
+    exampleInputPt1 |> Day03.solve |> should equal (161, 161)
 
 [<Test>]
-let ``Example from adventofcode.com, part 2`` () =
-    exampleInputPt2 |> Day03.solvePart2 |> should equal 48
+let ``Example from adventofcode.com, part 2, with part 2 input`` () =
+    exampleInputPt2 |> Day03.solve |> should equal (161, 48)
