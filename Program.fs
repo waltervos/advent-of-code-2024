@@ -15,12 +15,12 @@ module Program =
                 let output = dayRunners[day]()
                 printfn "%s" output
                 0
-            | None when day = "all" ->
-                dayRunners |> Map.iter (fun day runner -> runner () |> printfn "%s")
-                0
             | _ ->
-                printfn "%s is not a valid day" day
+                printfn "%s is not a valid day, or isn't solved yet." day
                 1
+        | [||] ->
+            dayRunners |> Map.iter (fun day runner -> runner () |> printfn "%s")
+            0
         | _ ->
-            printfn "Please supply a day number as an argument"
+            printfn "Please supply only a day number as an argument, or supply no argument to run all the solutions."
             1
