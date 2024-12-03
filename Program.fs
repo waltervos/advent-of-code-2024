@@ -15,9 +15,9 @@ module Program =
                 let output = dayRunners[day]()
                 printfn "%s" output
                 0
-            | _ -> 
+            | _ ->
                 printfn "%s is not a valid day" day
                 1
         | _ ->
-            printfn "Please supply a day number as an argument" 
+            printfn "Please supply a day number as an argument"
             1

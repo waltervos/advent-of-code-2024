@@ -11,7 +11,8 @@ module Day02 =
 
     let isSafeReport report =
         report
-        |> List.pairwise |> List.map (fun (left, right) -> left - right)
+        |> List.pairwise
+        |> List.map (fun (left, right) -> left - right)
         |> (fun diffList ->
             match diffList |> List.partition (fun diff -> diff >= 0) with
             | [], everything
