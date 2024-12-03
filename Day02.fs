@@ -5,38 +5,38 @@ module Day02 =
     open System
 
     let toVariants report =
-        report |> List.mapi (fun i v -> report |> List.removeAt i)
+        report |> Seq.mapi (fun i v -> report |> Seq.removeAt i)
 
     let isSafeDiff diff = diff >= 1 && diff <= 3
 
     let isSafeReport report =
         report
-        |> List.pairwise
-        |> List.map (fun (left, right) -> left - right)
+        |> Seq.pairwise
+        |> Seq.map (fun (left, right) -> left - right)
         |> (fun diffList ->
-            match diffList |> List.partition (fun diff -> diff >= 0) with
+            match diffList |> List.ofSeq |> List.partition (fun diff -> diff >= 0) with
             | [], everything
-            | everything, [] -> diffList |> List.map (fun diff -> abs diff) |> List.forall isSafeDiff
+            | everything, [] -> diffList |> Seq.map (fun diff -> abs diff) |> Seq.forall isSafeDiff
             | _ -> false)
 
     let solvePart1 reports =
         reports
-        |> List.map isSafeReport
-        |> List.filter (fun isSafe -> isSafe)
-        |> List.length
+        |> Seq.map isSafeReport
+        |> Seq.filter (fun isSafe -> isSafe)
+        |> Seq.length
 
     let solvePart2 reports =
         reports
-        |> List.map toVariants
-        |> List.map solvePart1
-        |> List.filter (fun i -> i > 0)
-        |> List.length
+        |> Seq.map toVariants
+        |> Seq.map solvePart1
+        |> Seq.filter (fun i -> i > 0)
+        |> Seq.length
 
     let parse (s: string) =
         s.Split("\n", StringSplitOptions.TrimEntries)
-        |> List.ofArray
-        |> List.map (fun s -> s.Split(" ") |> List.ofArray)
-        |> List.map (fun l -> l |> List.map (fun s -> s |> Int32.Parse))
+        |> Seq.ofArray
+        |> Seq.map (fun s -> s.Split(" ") |> Seq.ofArray)
+        |> Seq.map (fun l -> l |> Seq.map (fun s -> s |> Int32.Parse))
 
     let main =
         let reports = Library.getInputForDay 2 |> parse

@@ -15,6 +15,9 @@ module Program =
                 let output = dayRunners[day]()
                 printfn "%s" output
                 0
+            | None when day = "all" ->
+                dayRunners |> Map.iter (fun day runner -> runner () |> printfn "%s")
+                0
             | _ ->
                 printfn "%s is not a valid day" day
                 1

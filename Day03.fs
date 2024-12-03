@@ -14,7 +14,7 @@ type State =
 
 module Day03 =
     let classify (regexMatch: Match) =
-        match regexMatch.Groups |> List.ofSeq |> List.filter (fun g -> g.Length > 0) with
+        match regexMatch.Groups |> Seq.filter (fun g -> g.Length > 0) |> List.ofSeq with
         | [ _; first; second ] -> Multiplication(first.Value |> int, second.Value |> int)
         | [ group ] when group.Value = "do()" -> Do
         | [ group ] when group.Value = "don't()" -> Don't

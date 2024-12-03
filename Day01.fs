@@ -7,25 +7,26 @@ module Day01 =
     let solve left right =
         let pt1 =
             [ left; right ]
-            |> List.map (fun l -> l |> List.sort)
-            |> List.transpose
-            |> List.map (fun l -> l |> List.reduce (fun nLeft nRight -> abs (nLeft - nRight)))
-            |> List.sum
+            |> Seq.map (fun l -> l |> Seq.sort)
+            |> Seq.transpose
+            |> Seq.map (fun l -> l |> Seq.reduce (fun nLeft nRight -> abs (nLeft - nRight)))
+            |> Seq.sum
 
         let pt2 =
             left
-            |> List.map (fun nLeft -> (right |> List.filter (fun nRight -> nRight = nLeft) |> List.length) * nLeft)
-            |> List.sum
+            |> Seq.map (fun nLeft -> (right |> Seq.filter (fun nRight -> nRight = nLeft) |> Seq.length) * nLeft)
+            |> Seq.sum
 
         pt1, pt2
 
     let parse (s: string) =
         let intListList =
             s.Split("\n", StringSplitOptions.TrimEntries)
-            |> List.ofArray
-            |> List.map (fun s -> s.Split("   ") |> List.ofArray)
-            |> List.map (fun l -> l |> List.map (fun s -> s |> Int32.Parse))
-            |> List.transpose
+            |> Seq.ofArray
+            |> Seq.map (fun s -> s.Split("   ") |> Seq.ofArray)
+            |> Seq.map (fun l -> l |> Seq.map (fun s -> s |> Int32.Parse))
+            |> Seq.transpose
+            |> List.ofSeq
 
         intListList[0], intListList[1]
 
