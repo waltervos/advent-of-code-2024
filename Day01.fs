@@ -22,9 +22,8 @@ module Day01 =
     let parse (s: string) =
         let intListList =
             s.Split("\n", StringSplitOptions.TrimEntries)
-            |> Seq.ofArray
-            |> Seq.map (fun s -> s.Split("   ") |> Seq.ofArray)
-            |> Seq.map (fun l -> l |> Seq.map (fun s -> s |> Int32.Parse))
+            |> Seq.map (fun s -> s.Split("   "))
+            |> Seq.map (fun l -> l |> Seq.map Int32.Parse)
             |> Seq.transpose
             |> List.ofSeq
 

@@ -34,8 +34,7 @@ module Day02 =
 
     let parse (s: string) =
         s.Split("\n", StringSplitOptions.TrimEntries)
-        |> Seq.ofArray
-        |> Seq.map (fun s -> s.Split(" ") |> Seq.ofArray)
+        |> Seq.map (fun s -> s.Split(" "))
         |> Seq.map (fun l -> l |> Seq.map (fun s -> s |> Int32.Parse))
 
     let main =
