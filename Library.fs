@@ -19,5 +19,4 @@ module List =
         [ for i in 0 .. (maxWidth - 1) -> (matrix[i] |> taker (maxHeight - i) |> filler i) ]
 
 module Grid =
-    let windowed grid count =
-        grid
+    let windowed grid count = grid

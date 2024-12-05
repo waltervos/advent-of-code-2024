@@ -40,9 +40,11 @@ let example =
 
 [<Test>]
 let ``Example from adventofcode.com, part 1`` () =
-    example
-    |> Day05.solve
-    |> should equal 143
+    example |> Day05.parse ||> Day05.solvePart1 |> should equal 143
+
+[<Test>]
+let ``Example from adventofcode.com, part 2`` () =
+    example |> Day05.parse ||> Day05.solvePart2 |> should equal 123
 
 
 [<TestCase([| 1; 2; 3 |], 2)>]
@@ -71,3 +73,13 @@ let ``Processing a partially correct update with rules`` () =
     let rules = [ (1, 2); (2, 3) ]
 
     update |> Day05.getMiddlePageIfCorrect rules |> should equal 0
+
+[<Test>]
+let ``Sorting according to the rules`` () =            
+    let update = [ 1; 3; 2 ]
+    let rules = [ (1, 2); (2, 3); (4,3) ]
+    let comparer = Day05.comparedByRules rules
+
+    update
+    |> Seq.sortWith comparer
+    |> should equal [ 1; 2; 3 ]
