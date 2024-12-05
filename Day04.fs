@@ -34,7 +34,7 @@ module Day04 =
 
             seq { // Bottom right to top left, top to bottom < (0, 2), (1, 1), (2, 0) >, < (1, 2), (2, 1) >
                 for (x, y) in (maxX |> fromZero, maxY |> toZero) ||> List.zip ->
-                    seq { for i in maxX |> fromZero -> (x + i, y) }
+                    seq { for i in maxY |> fromZero -> (x + i, y) }
                     |> Seq.filter (fun (x, y) -> x <= maxX)
             }
             |> Seq.transpose
@@ -53,15 +53,47 @@ module Day04 =
         |> Seq.filter (fun window -> window = christmasList || window = (christmasList |> Array.rev))
         |> Seq.length
 
-    let solve (puzzle: string) =
+    let multiWindowed size grid =
+        grid
+        |> Seq.map (Seq.windowed size)
+        |> Seq.windowed size
+        |> Seq.map Seq.transpose
+        |> Seq.concat
+
+    let toRelevant (window: char array seq) =
+            window
+            |> List.ofSeq
+            |> (fun window ->
+                [ [ window[0][0]; '.'; window[0][2] ]
+                  [ '.'; window[1][1]; '.' ]
+                  [ window[2][0]; '.'; window[2][2] ] ])
+
+    let toGrid (puzzle: string) =
         puzzle.Split("\n", StringSplitOptions.RemoveEmptyEntries ||| StringSplitOptions.TrimEntries)
         |> List.ofArray
         |> List.map (fun s -> s.ToCharArray() |> List.ofArray)
-        |> explode
-        |> Seq.map countChristmas
-        |> Seq.sum
+
+    let solvePart1 puzzle =
+        puzzle |> toGrid |> explode |> Seq.map countChristmas |> Seq.sum
+
+    let solvePart2 puzzle =
+        let xMases =
+            [ [ [ 'M'; '.'; 'M' ]; [ '.'; 'A'; '.' ]; [ 'S'; '.'; 'S' ] ]
+              [ [ 'S'; '.'; 'S' ]; [ '.'; 'A'; '.' ]; [ 'M'; '.'; 'M' ] ]
+              [ [ 'M'; '.'; 'S' ]; [ '.'; 'A'; '.' ]; [ 'M'; '.'; 'S' ] ]
+              [ [ 'S'; '.'; 'M' ]; [ '.'; 'A'; '.' ]; [ 'S'; '.'; 'M' ] ] ]
+
+        puzzle
+        |> toGrid
+        |> multiWindowed 3
+        |> Seq.map toRelevant
+        |> Seq.filter (fun window -> xMases |> List.exists (fun xMas -> xMas = window))
+        |> Seq.length
+
+    let solve puzzle =
+        puzzle |> solvePart1, puzzle |> solvePart2
 
     let main =
-        let part1 = Library.getInputForDay 4 |> solve
+        let part1, part2 = Library.getInputForDay 4 |> solve
 
-        $"Solutions for day 4:\nPart 1: {part1}\n"
+        $"Solutions for day 4:\nPart 1: {part1}\nPart 2: {part2}\n"
