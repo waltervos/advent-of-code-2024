@@ -7,7 +7,8 @@ module Program =
             Map[(1, (fun () -> Day01.main))
                 (2, (fun () -> Day02.main))
                 (3, (fun () -> Day03.main))
-                (4, (fun () -> Day04.main))]
+                (4, (fun () -> Day04.main))
+                (5, (fun () -> Day05.main))]
 
         match args with
         | [| day |] ->
