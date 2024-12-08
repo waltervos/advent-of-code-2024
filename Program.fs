@@ -8,7 +8,9 @@ module Program =
                 (2, (fun () -> Day02.main))
                 (3, (fun () -> Day03.main))
                 (4, (fun () -> Day04.main))
-                (5, (fun () -> Day05.main))]
+                (5, (fun () -> Day05.main))
+                (6, (fun () -> Day06.main))
+                (7, (fun () -> Day07.main))]
 
         match args with
         | [| day |] ->

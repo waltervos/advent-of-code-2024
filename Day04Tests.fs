@@ -34,7 +34,7 @@ let ``multiWindow test`` () =
     let grid = [ [ 'A'; 'B'; 'C' ]; [ 'D'; 'E'; 'F' ]; [ 'G'; 'H'; 'I' ] ]
 
     grid
-    |> Day04.multiWindowed 2
+    |> Grid.windowed 2
     |> Seq.map List.ofSeq
     |> List.ofSeq
     |> should

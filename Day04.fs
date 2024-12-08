@@ -53,13 +53,6 @@ module Day04 =
         |> Seq.filter (fun window -> window = christmasList || window = (christmasList |> Array.rev))
         |> Seq.length
 
-    let multiWindowed size grid =
-        grid
-        |> Seq.map (Seq.windowed size)
-        |> Seq.windowed size
-        |> Seq.map Seq.transpose
-        |> Seq.concat
-
     let toRelevant (window: char array seq) =
             window
             |> List.ofSeq
@@ -68,13 +61,8 @@ module Day04 =
                   [ '.'; window[1][1]; '.' ]
                   [ window[2][0]; '.'; window[2][2] ] ])
 
-    let toGrid (puzzle: string) =
-        puzzle.Split("\n", StringSplitOptions.RemoveEmptyEntries ||| StringSplitOptions.TrimEntries)
-        |> List.ofArray
-        |> List.map (fun s -> s.ToCharArray() |> List.ofArray)
-
     let solvePart1 puzzle =
-        puzzle |> toGrid |> explode |> Seq.map countChristmas |> Seq.sum
+        puzzle |> Library.toGrid |> explode |> Seq.map countChristmas |> Seq.sum
 
     let solvePart2 puzzle =
         let xMases =
@@ -84,8 +72,8 @@ module Day04 =
               [ [ 'S'; '.'; 'M' ]; [ '.'; 'A'; '.' ]; [ 'S'; '.'; 'M' ] ] ]
 
         puzzle
-        |> toGrid
-        |> multiWindowed 3
+        |> Library.toGrid
+        |> Grid.windowed 3
         |> Seq.map toRelevant
         |> Seq.filter (fun window -> xMases |> List.exists (fun xMas -> xMas = window))
         |> Seq.length
