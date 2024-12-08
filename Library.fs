@@ -17,13 +17,6 @@ module Library =
         |> List.map (fun s -> s.ToCharArray() |> List.ofArray)
 
 module List =
-    let takeBack n = List.rev >> List.take n >> List.rev
-
-    let rotate45 taker filler matrix =
-        let maxWidth = matrix |> List.length
-        let maxHeight = matrix |> List.head |> List.length
-        [ for i in 0 .. (maxWidth - 1) -> (matrix[i] |> taker (maxHeight - i) |> filler i) ]
-
     let change index value lst =
         lst |> List.removeAt index |> List.insertAt index value
 
