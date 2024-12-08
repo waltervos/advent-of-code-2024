@@ -14,8 +14,13 @@ type State =
 
 module Day03 =
     let classify (regexMatch: Match) =
-        match regexMatch.Groups |> Seq.filter (fun g -> g.Length > 0) |> List.ofSeq with
-        | [ _; first; second ] -> Multiplication(first.Value |> int, second.Value |> int)
+        match
+            regexMatch.Groups
+            |> Seq.filter (fun g -> g.Length > 0)
+            |> List.ofSeq
+        with
+        | [ _; first; second ] ->
+            Multiplication(first.Value |> int, second.Value |> int)
         | [ group ] when group.Value = "do()" -> Do
         | [ group ] when group.Value = "don't()" -> Don't
         | _ -> failwith $"{regexMatch} is not a match we can classify."
@@ -49,6 +54,7 @@ module Day03 =
         (endState.Total, endState.ConditionalTotal)
 
     let main =
-        let part1, part2 = Library.getInputForDay 3 |> solve
+        fun () ->
+            let part1, part2 = Library.getInputForDay 3 |> solve
 
-        $"Solutions for day 3:\nPart 1: {part1}\nPart 2: {part2}\n"
+            $"Solutions for day 3:\nPart 1: {part1}\nPart 2: {part2}\n"

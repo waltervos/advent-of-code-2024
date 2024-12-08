@@ -11,8 +11,15 @@ module Day04 =
         let maxY = (grid |> List.length) - 1
 
         seq {
-            seq { for y in maxY |> fromZero -> seq { for x in maxX |> fromZero -> (x, y) } } // Vertical, travelling left to right
-            seq { for x in maxX |> fromZero -> seq { for y in maxY |> fromZero -> (x, y) } } // Horizontal, travelling top to bottom
+            seq {
+                for y in maxY |> fromZero ->
+                    seq { for x in maxX |> fromZero -> (x, y) }
+            } // Vertical, travelling left to right
+
+            seq {
+                for x in maxX |> fromZero ->
+                    seq { for y in maxY |> fromZero -> (x, y) }
+            } // Horizontal, travelling top to bottom
 
             seq { // Top left to bottom right, travelling top to bottom
                 for x in maxX |> fromZero ->
@@ -50,16 +57,17 @@ module Day04 =
 
         row
         |> Seq.windowed 4
-        |> Seq.filter (fun window -> window = christmasList || window = (christmasList |> Array.rev))
+        |> Seq.filter (fun window ->
+            window = christmasList || window = (christmasList |> Array.rev))
         |> Seq.length
 
     let toRelevant (window: char array seq) =
-            window
-            |> List.ofSeq
-            |> (fun window ->
-                [ [ window[0][0]; '.'; window[0][2] ]
-                  [ '.'; window[1][1]; '.' ]
-                  [ window[2][0]; '.'; window[2][2] ] ])
+        window
+        |> List.ofSeq
+        |> (fun window ->
+            [ [ window[0][0]; '.'; window[0][2] ]
+              [ '.'; window[1][1]; '.' ]
+              [ window[2][0]; '.'; window[2][2] ] ])
 
     let solvePart1 puzzle =
         puzzle |> Library.toGrid |> explode |> Seq.map countChristmas |> Seq.sum
@@ -75,13 +83,15 @@ module Day04 =
         |> Library.toGrid
         |> Grid.windowed 3
         |> Seq.map toRelevant
-        |> Seq.filter (fun window -> xMases |> List.exists (fun xMas -> xMas = window))
+        |> Seq.filter (fun window ->
+            xMases |> List.exists (fun xMas -> xMas = window))
         |> Seq.length
 
     let solve puzzle =
         puzzle |> solvePart1, puzzle |> solvePart2
 
     let main =
-        let part1, part2 = Library.getInputForDay 4 |> solve
+        fun () ->
+            let part1, part2 = Library.getInputForDay 4 |> solve
 
-        $"Solutions for day 4:\nPart 1: {part1}\nPart 2: {part2}\n"
+            $"Solutions for day 4:\nPart 1: {part1}\nPart 2: {part2}\n"

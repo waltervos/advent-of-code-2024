@@ -46,7 +46,7 @@ let ``Solve an example`` () =
     let testValue = 3267
     let numbers = [ 81; 40; 27 ] |> List.map int64
 
-    numbers |> Day07.verify testValue |> should equal 3267
+    numbers |> Day07.verify testValue |> should equal testValue
 
 
 [<Test>]

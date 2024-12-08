@@ -1,9 +1,5 @@
 namespace AOC2024
 
-type Spot =
-    | Available
-    | Obstacle
-    | Guard
 
 type Direction =
     | North
@@ -16,6 +12,11 @@ type Position = int * int
 type Guard =
     { Position: Position
       Facing: Direction }
+
+type Spot =
+    | Available
+    | Obstacle
+    | Guard of Guard
 
 type Ended =
     | OffMapAfter of Position list
@@ -92,46 +93,54 @@ module Day06 =
             OffMapAfter(state.PositionsHeld |> List.distinct)
 
     let toMap grid =
-        grid
-        |> List.map (
-            List.map (fun c ->
-                match c with
-                | '.'
-                | '^' -> Available
-                | '#' -> Obstacle
-                | _ -> failwith $"{c} is not a valid character")
-        )
+        let map =
+            grid
+            |> List.mapi (fun y row ->
+                row
+                |> List.mapi (fun x column ->
+                    match column with
+                    | '.' -> Available
+                    | '^' -> Guard { Position = (x, y); Facing = North }
+                    | '#' -> Obstacle
+                    | _ -> failwith $"{column} is not a valid character"))
 
+        // We can now find the guard from the map, yes?
+
+        map
 
     let parse puzzle = puzzle |> Library.toGrid |> toMap
 
     let solvePart1 map guard = (map, guard) ||> keepWalking State.init
 
     let solvePart2 map guard positionsHeld =
-        // let alternativeMaps =
-        //     [ for (x, y) in positionsHeld ->
-        //           map
-        //           |> List.mapi (fun yI row ->
-        //               row
-        //               |> List.mapi (fun xI spot ->
-        //                   if xI = x && yI = y then Obstacle else spot)) ]
-
         let alternativeMaps =
-            [ for y in 0 .. (map |> List.length) - 1 do
-                  for x in 0 .. (map |> List.length) - 1 ->
-                      map |> List.change y (map[y] |> List.change x Obstacle) ]
-            |> List.filter (fun aMap -> aMap <> map)
+            seq {
+                for (x, y) in positionsHeld ->
+                    map
+                    |> List.mapi (fun yI row ->
+                        row
+                        |> List.mapi (fun xI spot ->
+                            if
+                                xI = x && yI = y && (x, y) <> guard.Position
+                            then
+                                Obstacle
+                            else
+                                spot))
+            }
 
-        [ for i, alternativeMap in alternativeMaps |> List.indexed ->
-              (solvePart1 alternativeMap guard) ]
-        |> List.filter (fun ended ->
+        let versions = alternativeMaps |> Seq.length
+
+        seq {
+            for i, alternativeMap in alternativeMaps |> Seq.indexed ->
+                (solvePart1 alternativeMap guard)
+        }
+        |> Seq.filter (fun ended ->
             match ended with
             | InLoopAfter _ -> true
             | _ -> false
 
         )
-        |> List.distinct
-        |> List.length
+        |> Seq.length
 
     let solve guard puzzle =
         let map = puzzle |> parse
@@ -144,7 +153,8 @@ module Day06 =
         | _ -> failwith "Somehow we didn't go off map after part 1?"
 
     let main =
-        let guard = { Position = 59, 71; Facing = North }
-        let part1, part2 = Library.getInputForDay day |> solve guard
+        fun () ->
+            let guard = { Position = 59, 71; Facing = North }
+            let part1, part2 = Library.getInputForDay day |> solve guard
 
-        $"Solutions for day {day}:\nPart 1: {part1}\nPart 2: {part2}\n"
+            $"Solutions for day {day}:\nPart 1: {part1}\nPart 2: {part2}\n"

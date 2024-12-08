@@ -1,5 +1,7 @@
 namespace AOC2024
 
+type Solution = | PartOne of int | PartOneAndTwo of int * int
+
 module Library =
     open System
     let getInputForDay day =

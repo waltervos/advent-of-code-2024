@@ -63,18 +63,17 @@ module Day07 =
                 |> List.ofArray
             with
             | testValue :: numbers ->
-                try
-                    testValue.Trim(':') |> int64, numbers |> List.map int64
-                with
-                | ex -> 
-                    failwith $"{line} caused: {ex.ToString()}"
+                testValue.Trim(':') |> int64, numbers |> List.map int64
             | _ -> failwith $"Couldn't parse {line}")
 
     let solve puzzle =
-        puzzle |> parse |> List.map (fun equation -> equation ||> verify) |> List.sum
+        puzzle
+        |> parse
+        |> List.map (fun equation -> equation ||> verify)
+        |> List.sum
 
     let main =
-        let part1 = Library.getInputForDay 7 |> solve
+        (fun () ->
+            let part1 = Library.getInputForDay 7 |> solve
 
-        $"Solutions for day 7:\nPart 1: {part1}\n"
-
+            $"Solutions for day 7:\nPart 1: {part1}\n")
