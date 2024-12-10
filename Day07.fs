@@ -14,7 +14,7 @@ module Day07 =
     let toFunction =
         function
         | Add -> (+)
-        | Mul -> (fun x y -> x * y)
+        | Mul -> (*)
 
     let allCombinations length =
         [ for i in 0..length ->
