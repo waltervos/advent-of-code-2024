@@ -26,7 +26,7 @@ module Day09 =
             blocks |> Array.tryFindIndex isFree,
             blocks |> Array.tryFindIndexBack isFile
         with
-        | Some firstFreeBlockIndex, Some lastFileBlockIndex when lastFileBlockIndex >= firstFreeBlockIndex ->
+        | Some firstFreeBlockIndex, Some lastFileBlockIndex when lastFileBlockIndex > firstFreeBlockIndex ->
             
             Array.set blocks firstFreeBlockIndex blocks[lastFileBlockIndex]
             Array.set blocks lastFileBlockIndex FreeBlock
