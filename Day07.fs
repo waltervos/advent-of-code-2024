@@ -1,44 +1,47 @@
 namespace AOC2024
 
 type Result =
-    | Match of string list
+    | Match of (int64 -> int64 -> int64) list
     | NotAMatch
+
+type Operator =
+    | Add
+    | Mul
 
 module Day07 =
     open System
 
+    let toFunction =
+        function
+        | Add -> (+)
+        | Mul -> (fun x y -> x * y)
+
     let allCombinations length =
         [ for i in 0..length ->
-              ("+" |> List.replicate i) @ ("*" |> List.replicate (length - i))
+              (Add |> List.replicate i) @ (Mul |> List.replicate (length - i))
               |> List.allSorts ]
         |> List.concat
 
-    let calculate (numbers: int64 list) operations =
-        let rec operate numbers operations state =
-            match numbers, operations with
-            | (number :: nTail), (_ :: _) when
-                numbers.Length > operations.Length
-                ->
-                operate nTail operations number
-            | (number :: nTail), (operation :: oTail) ->
-                let newState =
-                    match operation with
-                    | "+" -> state + number
-                    | "*" -> state * number
-                    | _ -> state
-
-                newState |> operate nTail oTail
-            | _ -> state
-
-        operate numbers operations 0
+    let calculate (numbers: int64 list) operators =
+        match numbers with
+        | first :: rest ->
+            first
+            |> (List.map2
+                    (fun number operator -> operator number)
+                    rest
+                    operators
+                |> List.reduce (>>))
+        | _ -> 0
 
     let verify (testValue: int64) (numbers: int64 list) =
-        let operationSets = allCombinations ((numbers |> List.length) - 1)
+        let operationSets =
+            allCombinations (numbers.Length - 1)
+            |> List.map (List.map toFunction)
 
         operationSets
-        |> List.map (fun operations ->
-            if calculate numbers operations = testValue then
-                Match(operations)
+        |> List.map (fun operators ->
+            if calculate numbers operators = testValue then
+                Match(operators)
             else
                 NotAMatch)
         |> List.filter (function

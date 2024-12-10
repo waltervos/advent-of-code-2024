@@ -93,20 +93,15 @@ module Day06 =
             OffMapAfter(state.PositionsHeld |> List.distinct)
 
     let toMap grid =
-        let map =
-            grid
-            |> List.mapi (fun y row ->
-                row
-                |> List.mapi (fun x column ->
-                    match column with
-                    | '.' -> Available
-                    | '^' -> Guard { Position = (x, y); Facing = North }
-                    | '#' -> Obstacle
-                    | _ -> failwith $"{column} is not a valid character"))
-
-        // We can now find the guard from the map, yes?
-
-        map
+        grid
+        |> List.map (fun row ->
+            row
+            |> List.map (fun column ->
+                match column with
+                | '.'
+                | '^' -> Available
+                | '#' -> Obstacle
+                | _ -> failwith $"{column} is not a valid character"))
 
     let parse puzzle = puzzle |> Library.toGrid |> toMap
 

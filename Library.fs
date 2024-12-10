@@ -1,7 +1,5 @@
 namespace AOC2024
 
-type Solution = | PartOne of int | PartOneAndTwo of int * int
-
 module Library =
     open System
     let getInputForDay day =
@@ -32,6 +30,15 @@ module List =
         let maxIndex = (lst |> List.length) - 1
         [ for i in 0..maxIndex do for j in 0..maxIndex -> lst |> swap i j ] |> List.distinct
 
+
+module Seq =
+    let change index value lst =
+        lst |> Seq.removeAt index |> Seq.insertAt index value
+    let swap index1 index2 lst =
+        let elem1 = lst |> Seq.item index1
+        let elem2 = lst |> Seq.item index2
+
+        lst |> change index1 elem2 |> change index2 elem1
 
 module Grid =
     let windowed size grid =
