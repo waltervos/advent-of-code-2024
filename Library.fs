@@ -47,3 +47,19 @@ module Grid =
         |> Seq.windowed size
         |> Seq.map Seq.transpose
         |> Seq.concat
+
+    let inBounds grid (x,y) =
+        x >= 0 && x < (grid |> Array2D.length2) && y >= 0 && y < (grid |> Array2D.length1)
+
+    let set x y (value: 'a) (grid: 'a array2d) =
+        grid[y, x] <- value
+        grid
+
+module String =
+    open System
+    let split (on: char) (string: string) =
+        string.Split(
+            on,
+            StringSplitOptions.RemoveEmptyEntries
+            ||| StringSplitOptions.TrimEntries
+        )

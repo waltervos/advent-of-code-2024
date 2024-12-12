@@ -66,10 +66,13 @@ module Day09 =
                 Array.set blocks firstFreeBlockIndex blocks[lastFileBlockIndex]
                 Array.set blocks lastFileBlockIndex FreeBlock
 
-                printfn "Swapped free block at position %i with last file block at position %i (%.2f%%)"
+                printfn
+                    "Swapped free block at position %i with last file block at position %i (%.2f%%)"
                     firstFreeBlockIndex
                     lastFileBlockIndex
-                    ((firstFreeBlockIndex |> double) / (lastFileBlockIndex |> double) * 100.)
+                    ((firstFreeBlockIndex |> double)
+                     / (lastFileBlockIndex |> double)
+                     * 100.)
 
                 blocks |> move
             | _ -> blocks
@@ -96,16 +99,18 @@ module Day09 =
                         "Swapped free block at position %i with last file block at position %A (%.2f%% to go)"
                         (freeIndexes |> Array.head)
                         (lastFileIndexes |> Array.head)
-                        ((lastFileIndexes |> Array.last |> double) / (double blocks.Length)
-                            * 100.)
+                        ((lastFileIndexes |> Array.last |> double)
+                         / (double blocks.Length)
+                         * 100.)
 
                     move blocks (lastFileIndexes |> Array.head)
-                | _ ->
-                    move blocks (lastFileIndexes |> Array.head)
+                | _ -> move blocks (lastFileIndexes |> Array.head)
 
         move blocks blocks.Length
 
     let checksum blocks =
+        printfn "Calculating checksum..."
+
         blocks
         |> Array.mapi (fun position block ->
             match block with
