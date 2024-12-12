@@ -4,35 +4,83 @@ module Day10 =
 
     let findTrailsFrom (x, y) map =
         let rec inner (x, y) (map: int array2d) trails =
-            printfn "Looking at %A, having value %i" (x,y) map[y,x]
-            let upDownLeftRight =
-                [ (x, y - 1); (x, y + 1); (x - 1, y); (x + 1, y) ]
+            printfn "Looking at %A, having value %i" (x, y) map[y, x]
 
-            if map[y, x] <> 9 then
-                [ for trail in trails do
-                      for nextX, nextY in upDownLeftRight do
-                          if
-                              (nextX, nextY) |> Grid.inBounds map
-                              && map[nextY, nextX] = (map[y, x] + 1)
-                          then
-                              printfn
-                                  "%i at %A is one higher than %i"
-                                  map[nextY, nextX]
-                                  (nextX, nextY)
-                                  map[y, x]
+            match map[y, x] with
+            | 9 -> trails
+            | _ ->
+                let up, down, left, right =
+                    ((x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y))
 
-                              inner
-                                  (nextX, nextY)
-                                  map
-                                  (trails @ [ [ (nextX, nextY) ] ])
-                              |> List.concat
-                              |> List.distinct // <- Definitely doing something wrong if we need this... :D
-                          else
-                              printfn "In the first else!"
-                              trail ]
-            else
-                printfn "In the second else!"
-                trails
+                let stepUp =
+                    if up |> Grid.inBounds map then
+                        if map[snd up, fst up] = (map[y, x] + 1) then
+                            inner
+                                up
+                                map
+                                trails
+                                |> List.map (fun trail ->
+                                    if trail |> List.last = (x, y) then
+                                        [ up ] |> List.append trail
+                                    else
+                                        trail)
+                        else
+                            []
+                    else
+                        []
+
+                let stepDown =
+                    if down |> Grid.inBounds map then
+                        if map[snd down, fst down] = (map[y, x] + 1) then
+                            inner 
+                                down
+                                map
+                                trails
+                                |> List.map (fun trail ->
+                                    if trail |> List.last = (x, y) then
+                                        [ down ] |> List.append trail
+                                    else
+                                        trail)
+                        else
+                            []
+                    else
+                        []
+
+                let stepLeft =
+                    if left |> Grid.inBounds map then
+                        if map[snd left, fst left] = (map[y, x] + 1) then
+                            inner
+                                left
+                                map
+                                trails
+                                |> List.map (fun trail ->
+                                    if trail |> List.last = (x, y) then
+                                        [ left ] |> List.append trail
+                                    else
+                                        trail)
+                        else
+                            []
+                    else
+                        []
+
+                let stepRight =
+                    if right |> Grid.inBounds map then
+                        if map[snd right, fst right] = (map[y, x] + 1) then
+                            inner
+                                right
+                                map
+                                trails
+                                |> List.map (fun trail ->
+                                    if trail |> List.last = (x, y) then
+                                        [ right ] |> List.append trail
+                                    else
+                                        trail)
+                        else
+                            []
+                    else
+                        []
+
+                List.concat [ stepUp; stepDown; stepLeft; stepRight ] |> List.distinct
 
 
         inner (x, y) map [ [ (x, y) ] ]

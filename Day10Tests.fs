@@ -64,9 +64,5 @@ let ``What?`` () =
     printfn "%A" map
 
     map
-    |> (fun m -> printfn "Daar gaan we!"; m)
     |> findTrailsFrom (0, 0)
-    |> (fun r ->
-        printfn "Klaar!"
-        r)
-    |> should haveLength 5
+    |> should equal []
