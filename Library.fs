@@ -63,3 +63,6 @@ module String =
             StringSplitOptions.RemoveEmptyEntries
             ||| StringSplitOptions.TrimEntries
         )
+
+    let remove startAt count (string: string) =
+        string.Remove(startAt, count)
