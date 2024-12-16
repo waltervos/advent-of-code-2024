@@ -12,7 +12,7 @@ type Robot =
       Velocity: int * int }
 
     member this.Move(gridWidth, gridHeight) =
-        let x,y = this.Position
+        let x, y = this.Position
         let horizontalVelocity, verticalVelocity = this.Velocity
         let newX = x + horizontalVelocity
         let newY = y + verticalVelocity
@@ -27,6 +27,26 @@ type Robot =
                  else newY) }
 
 module Day14 =
+    open System.Text
+    open System.Threading
+
+    let toString (width, height) robots =
+        let positions = robots |> Array.ofSeq |> Array.map _.Position
+
+        let sb = StringBuilder()
+
+        for y in [ 0 .. height - 1 ] do
+            if y > 0 then
+                sb.AppendLine("") |> ignore
+
+            for x in [ 0 .. width - 1 ] do
+                if positions |> Array.contains (x, y) then
+                    sb.Append("#") |> ignore
+                else
+                    sb.Append(".") |> ignore
+
+        sb |> string
+
     let toQuadrant (gridWidth, gridHeight) (xPosition, yPosition) =
         let horizontalMiddle = gridWidth / 2
         let verticalMiddle = gridHeight / 2
@@ -39,6 +59,7 @@ module Day14 =
             NorthEast
         else
             SouthEast
+
     let countByQuadrant (width, height) (robots: Robot seq) =
         robots
         |> Seq.map (fun r -> toQuadrant (width, height) r.Position)
@@ -56,6 +77,40 @@ module Day14 =
             robot
         else
             robot.Move gridSize |> move (timesLeft - 1) gridSize
+
+    let mightBeChristmas robots =
+        robots
+        |> Seq.countBy _.Position
+        |> Seq.forall (snd >> (=) 1)
+
+    let rec moveUntilChristmas secondsPassed gridSize robots =
+        let currentRobots =
+            robots
+            |> Seq.map (move 1 gridSize)
+        
+        let currentSecondsPassed = (secondsPassed + 1)
+
+        if currentSecondsPassed % 1000 = 0 then
+            printfn "%O: Looking at second %i"  System.DateTime.Now currentSecondsPassed
+
+        if currentRobots |> mightBeChristmas then
+            System.Console.Clear()
+            System.Console.SetCursorPosition(0, 0)
+
+            printfn "%s" (currentRobots |> toString gridSize)
+
+            printfn
+                "Is this a Christmas tree (%i)?"
+                currentSecondsPassed
+
+            match System.Console.ReadKey() |> string with
+            | "Y"
+            | "y" -> currentSecondsPassed
+            | "N"
+            | "n"
+            | _ -> robots |> moveUntilChristmas currentSecondsPassed gridSize
+        else
+            currentRobots |> moveUntilChristmas currentSecondsPassed gridSize
 
     let parse puzzle =
         puzzle
@@ -76,17 +131,27 @@ module Day14 =
                   Velocity = velocityX, velocityY }
             | _ -> failwith "Can't parse!")
 
-    let solve (width, height) puzzle =
-        puzzle
-        |> parse
+    let solvePart1 (width, height) robots =
+        robots
         |> Seq.map (move 100 (width, height))
         |> countByQuadrant (width, height)
         |> Map.values
         |> Seq.reduce (*)
 
+    // let solvePart2 = moveUntilChristmas 0
+
+    let solve (width, height) puzzle =
+        let robots = puzzle |> parse
+
+        let part1 = robots |> solvePart1 (width, height)
+
+        let part2 = robots |> moveUntilChristmas 0 (width, height)
+
+        part1, part2
+
     let main =
         fun () ->
             let day = 14
-            let part1 = Library.getInputForDay day |> solve (101, 103)
+            let part1, part2 = Library.getInputForDay day |> solve (101, 103)
 
-            $"Solutions for day {day}:\nPart 1: {part1}\n"
+            $"Solutions for day {day}:\nPart 1: {part1}\nPart2: {part2}"

@@ -5,6 +5,7 @@ open FsUnit
 
 open AOC2024
 open AOC2024.Day14
+open System.Text
 
 let position robot = robot.Position
 
@@ -184,4 +185,19 @@ p=7,3 v=-1,2
 p=2,4 v=2,-3
 p=9,5 v=-3,-3"
 
-    example |> solve (11, 7) |> should equal 12
+    example
+    |> parse
+    |> solvePart1 (11, 7) 
+    |> should equal 12
+
+[<Test>]
+let ``to string`` () =
+    let gridSize = 2, 2
+
+    let robots =
+        [ { Position = 0, 0; Velocity = 1, 1 }
+          { Position = 1, 1; Velocity = 1, 1 } ]
+
+    (gridSize, robots)
+    ||> toString
+    |> should equal "#.\r\n.#"
