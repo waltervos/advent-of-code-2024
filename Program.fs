@@ -14,7 +14,9 @@ module Program =
                 (9, Day09.main)
                 (10, Day10.main)
                 (11, Day11.main)
-                (14, Day14.main)]
+                (14, Day14.main)
+                (16, Day16.main)
+                (19, Day19.main)]
 
         match args with
         | [| day |] ->
