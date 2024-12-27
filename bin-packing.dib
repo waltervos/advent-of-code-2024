@@ -1,0 +1,110 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"},{"aliases":[],"languageName":"fsharp","name":"fsharp"}]}}
+
+#!fsharp
+
+open System
+
+module String =
+    open System
+
+    let splitOnString (on: string) (string: string) =
+        string.Split(
+            on,
+            StringSplitOptions.TrimEntries ||| StringSplitOptions.RemoveEmptyEntries
+        )
+
+let parse puzzle =
+    match
+        puzzle
+        |> String.splitOnString "\r\n\r\n"
+        |> Array.partition (fun s -> s.Contains(","))
+    with
+    | (towels, designs) ->
+        (towels |> Array.item 0 |> String.splitOnString ","),
+        (designs |> Array.item 0 |> String.splitOnString "\n")
+
+let puzzle =
+        "r, wr, b, g, bwu, rb, gb, br
+
+brwrr
+bggr
+gbbr
+rrbgbr
+ubwu
+bwurrg
+brgr
+bbrgwb"
+
+let towels, designs = parse puzzle
+
+#!fsharp
+
+let isWhollyImpossible towels design =
+    let allIndexesOf (substring: string) (string: string) =
+        seq {
+            for i in 0..string.Length-1 do
+                let index = string.IndexOf(substring, i)
+                if index > -1 then
+                    yield seq {index..index+substring.Length-1}
+        } |> Seq.distinct
+
+    towels 
+    |> Array.fold (fun s t -> s |> Seq.append (design |> allIndexesOf t)) Seq.empty<int seq> 
+    |> Seq.concat
+    |> Seq.distinct
+    |> Seq.sort
+    |> Seq.forall2 (=) [0..design.Length-1]
+    |> not
+    
+
+designs |> Seq.filter (isWhollyImpossible towels >> not)
+
+#!fsharp
+
+let replace (subject: string) (newChar: char) (oldString: string) =
+        let replacer = new String(newChar, oldString.Length)
+        subject.Replace(oldString, replacer)
+
+let replaceFirst (subject: string) (newChar: char) (oldString: string) =
+    let replacer = new String(newChar, oldString.Length)
+    match subject.IndexOf(oldString) with
+    | -1 -> subject
+    | index -> subject.Remove(index, oldString.Length).Insert(index, replacer)
+
+type DesignBin =
+    { remaining: string }
+
+    member this.capacity =
+        this.remaining.Length
+        - (this.remaining |> String.filter (fun c -> c = ' ')).Length
+
+    member this.add towel =
+        { this with
+            remaining = replace this.remaining ' ' towel }
+
+    member this.canFit (towel: string) = this.remaining.Contains(towel)
+
+let isPossible towels design =
+    let mutable bins = Array.empty<DesignBin>
+
+    let rec innerLoop towels =
+        for (towel: string) in towels do
+            bins <- bins |> Array.sortBy _.capacity
+            match bins |> Array.tryFindIndex (fun bin -> towel |> bin.canFit) with
+            | Some index ->
+                bins[index] <- (towel |> bins[index].add)
+            | _ -> 
+                bins <- bins |> Array.append [|{ remaining = design }.add towel|]
+
+        if bins |> Array.filter (_.capacity >> (=) 0) |> Array.length > 0 then
+            printfn "%A" bins
+            true
+        else
+            printfn "%A" bins
+            innerLoop towels
+
+    innerLoop (towels |> Seq.filter (fun towel -> design.Contains(towel)))
+
+isPossible towels designs[0]

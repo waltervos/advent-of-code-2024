@@ -13,13 +13,25 @@ module String =
     let splitOnString (on: string) (string: string) =
         string.Split(
             on,
-            StringSplitOptions.TrimEntries ||| StringSplitOptions.RemoveEmptyEntries
+            StringSplitOptions.TrimEntries
+            ||| StringSplitOptions.RemoveEmptyEntries
         )
+
+    let allIndexesOf (substring: string) (string: string) =
+        seq {
+            for i in 0 .. string.Length - 1 do
+                let index = string.IndexOf(substring, i)
+
+                if index > -1 then
+                    yield seq { index .. index + substring.Length - 1 }
+        }
+        |> Seq.distinct
 
     let remove startAt count (string: string) = string.Remove(startAt, count)
 
-    let replace (subject: string) (newString: string) (oldString: string) = 
-        subject.Replace(oldString, newString)
+    let replace (subject: string) (newChar: char) (oldString: string) =
+        let replacer = new String(newChar, oldString.Length)
+        subject.Replace(oldString, replacer)
 
 module Library =
     open System
@@ -48,6 +60,10 @@ module Library =
                 parsed[0] |> Array.length, parsed |> Array.length
 
             Array2D.init height width (fun y x -> parsed[y][x]))
+
+    let say message =
+        printf "%O - " DateTime.Now
+        printfn message
 
 module List =
     let change index value lst =
