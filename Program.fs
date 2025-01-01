@@ -17,6 +17,7 @@ module Program =
                 (14, Day14.main)
                 (16, Day16.main)
                 (19, Day19.main)
+                (23, Day23.main)
                 (25, Day25.main)]
 
         match args with

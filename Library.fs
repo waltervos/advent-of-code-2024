@@ -1,7 +1,69 @@
 namespace AOC2024
 
+module Tuple =
+    let either predicate (first, second) =
+        first |> predicate || second |> predicate
+
+type Graph<'t when 't: comparison> = { Nodes: Set<'t>; Edges: Set<'t * 't> }
+
+module Graph =
+    let empty = { Nodes = Set.empty; Edges = Set.empty }
+
+    let addNodes nodes graph =
+        { graph with
+            Nodes = graph.Nodes |> Set.union (set nodes) }
+
+    let addNode node graph = graph |> addNodes (set [ node ])
+
+    let addEdges edges graph =
+        { graph with
+            Edges = graph.Edges |> Set.union edges }
+
+    let addEdge node1 node2 graph =
+        graph |> addEdges (set [ (node1, node2) ])
+
+    let nodes graph = graph.Nodes
+
+    let unionMany graphs =
+        { Nodes = graphs |> Seq.map _.Nodes |> Set.unionMany
+          Edges = graphs |> Seq.map _.Edges |> Set.unionMany }
+
+    let union graph1 graph2 = unionMany (seq [ graph1; graph2 ])
+
+
+    let getFrom node graph =
+        let edges = graph.Edges |> Set.filter (Tuple.either ((=) node))
+
+        let nodes =
+            graph.Nodes
+            |> Set.filter (fun n -> edges |> Set.exists (Tuple.either ((=) n)))
+            |> Set.add node
+
+        { Nodes = nodes; Edges = edges }
+
+    let explodeFrom node graph = seq [ graph |> getFrom node ]
+
+    let filterNodes predicate graph =
+        let nodes = graph |> nodes |> Set.filter (predicate graph.Edges)
+
+        { graph with Nodes = nodes }
+
+    let isConnected node1 node2 graph =
+        graph.Edges
+        |> Set.exists (function
+            | (n1, n2) when n1 = node1 && n2 = node2 || n1 = node2 && n2 = node1 ->
+                true
+            | _ -> false)
+
+
+
+
+
 module String =
     open System
+
+    let startsWith (string: string) (subject: string) =
+        subject.StartsWith(string)
 
     let split (on: char) (string: string) =
         string.Split(
@@ -92,6 +154,16 @@ module Seq =
         let elem2 = lst |> Seq.item index2
 
         lst |> change index1 elem2 |> change index2 elem1
+
+    let partition predicate seq =
+        seq
+        |> Seq.fold
+            (fun (trueValues, falseValues) el ->
+                if (el |> predicate) then
+                    (trueValues |> Seq.append [ el ], falseValues)
+                else
+                    (falseValues, trueValues |> Seq.append [ el ]))
+            (Seq.empty, Seq.empty)
 
 module Grid =
     let windowed size grid =
