@@ -59,7 +59,7 @@ let ``Solving the example`` () =
 let ``Solving the example, part 2`` () =
     let connections = example |> parse
 
-    connections |> findConnections' |> should equal ["co,de,ka,ta"]
+    connections |> findConnections' |> should equal "co,de,ka,ta"
 
 [<Test>]
 let ``Finding co-ka-ta`` () =
